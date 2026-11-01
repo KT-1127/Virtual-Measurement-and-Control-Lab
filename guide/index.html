@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TGT2Y7KLF3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TGT2Y7KLF3');
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>バーチャル計測制御ラボ | Open EduTech Lab</title>
+<meta name="description" content="ブロックでプログラムを作り、3Dの仮想空間でロボットカーや部屋のセンサーを動かして計測と制御を学ぶ教材。中学校技術「計測・制御のプログラミング」「生物育成の技術」対応、6章・23ステージ。Open EduTech Lab 無料公開。">
+<meta property="og:title" content="バーチャル計測制御ラボ | Open EduTech Lab">
+<meta property="og:description" content="ブロックでプログラム → 3Dの仮想空間でロボットカーが動く。センサーで測って、判断して、動かす計測・制御を体験的に学べます。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="../assets/shots/hero-town.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --paper: #F3F5FB;
+    --card:  #FFFFFF;
+    --ink:   #16213D;
+    --soft:  #5A6485;
+    --line:  #DEE4F2;
+    --brand:      #2F6FB0;
+    --brand-deep: #1E4E86;
+    --brand-tint: #E6F0FB;
+    --green:      #10B981;
+    --green-tint: #D1FAE5;
+    --teal:       #0FB5AA;
+    --teal-tint:  #DDF6F3;
+    --orange:     #F59E0B;
+    --orange-tint:#FEF3C7;
+    --red:        #EF4444;
+    --red-tint:   #FEE2E2;
+    --violet:     #7C3AED;
+    --violet-tint:#EDE9FE;
+    --sky:        #0EA5E9;
+    --sky-tint:   #E0F2FE;
+    --sun:        #F59E0B;
+    --sun-tint:   #FEF3C7;
+    --font:   "Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","BIZ UDPGothic",system-ui,sans-serif;
+    --shadow: 0 2px 8px rgba(22,33,61,.07), 0 16px 40px rgba(22,33,61,.10);
+    --radius: 20px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.75; -webkit-font-smoothing: antialiased; }
+  main { max-width: 860px; margin: 0 auto 60px; padding: 0 16px; }
+
+  .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; color: var(--soft); text-transform: uppercase; margin: 48px 0 18px 4px; }
+  .section-title { font-size: 1.35rem; font-weight: 900; letter-spacing: -.02em; color: var(--ink); margin-bottom: 6px; }
+  .section-desc { font-size: .88rem; color: var(--soft); margin-bottom: 22px; line-height: 1.7; }
+
+  /* ── 機能ブロック ── */
+  .feature-block { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1.5px solid var(--line); overflow: hidden; margin-bottom: 28px; position: relative; }
+  .feature-block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent, var(--brand)); }
+  .feature-block-head { padding: 28px 28px 0; display: flex; align-items: flex-start; gap: 16px; }
+  .fb-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .fb-meta { flex: 1; }
+  .fb-number { font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: var(--accent, var(--brand)); margin-bottom: 3px; }
+  .fb-title { font-size: 1.18rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.25; margin-bottom: 4px; }
+  .fb-tag { display: inline-block; font-size: .7rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+  .fb-img { margin: 20px 28px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); line-height: 0; }
+  .fb-img img { width: 100%; display: block; }
+  .fb-desc { padding: 18px 28px 0; font-size: .88rem; color: var(--soft); line-height: 1.85; }
+  .fb-points { margin: 16px 28px 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .fb-point { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-size: .855rem; line-height: 1.65; }
+  .fb-point:last-child { border-bottom: none; }
+  .fb-point .pt-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+  .fb-point .pt-body { flex: 1; }
+  .fb-point .pt-body strong { display: block; font-size: .87rem; font-weight: 800; color: var(--ink); margin-bottom: 1px; }
+  .fb-point .pt-body span { color: var(--soft); }
+  .feature-block-foot { padding: 20px 28px 28px; }
+  .stage-list { margin: 16px 28px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+  .stage-list div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: .8rem; background: var(--paper); }
+  .stage-list b { color: var(--accent, var(--brand)); margin-right: 4px; }
+  .stage-list .st { color: var(--sun); font-size: .72rem; }
+
+  /* ── トップ画像 ── */
+  .top-visual { position: relative; max-width: 1100px; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); line-height: 0; }
+  .top-visual img { width: 100%; display: block; }
+  .top-visual .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(18px,4vw,40px);
+    background: linear-gradient(180deg, rgba(15,27,51,0) 35%, rgba(15,27,51,.78) 100%); color: #fff; line-height: 1.4; }
+  .top-visual .kicker { font-size: clamp(.7rem,1.4vw,.9rem); font-weight: 800; letter-spacing: .2em; color: #BDEBFF; }
+  .top-visual h1 { font-size: clamp(1.6rem,4.6vw,3.2rem); font-weight: 900; letter-spacing: .02em; margin-top: 4px; }
+  .top-visual p { font-size: clamp(.8rem,1.5vw,1rem); opacity: .9; margin-top: 6px; }
+
+  /* ── アプリ起動バナー ── */
+  .launch-box { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .launch-banner { background: linear-gradient(135deg, #0FB5AA, #2F6FB0, #1E2A6B); color: #fff; padding: 32px 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .launch-banner .left { display: flex; flex-direction: column; gap: 10px; }
+  .launch-banner .badge-live { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.22); color: #fff; font-size: .72rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; width: fit-content; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; animation: livepulse 1.6s infinite; }
+  @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,.6); } 70% { box-shadow: 0 0 0 7px rgba(74,222,128,0); } 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); } }
+  .launch-banner h3 { font-size: 1.3rem; font-weight: 800; }
+  .launch-banner p  { font-size: .85rem; opacity: .9; max-width: 44ch; line-height: 1.7; }
+  .btn-launch { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--brand-deep); font-weight: 800; font-size: .92rem; padding: 14px 30px; border-radius: 12px; text-decoration: none; transition: all .2s; flex-shrink: 0; box-shadow: 0 4px 20px rgba(0,0,0,.18); }
+  .btn-launch:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.24); }
+  .launch-feats { padding: 18px 24px; display: flex; gap: 14px; flex-wrap: wrap; border-top: 1px solid var(--line); }
+  .launch-feat-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--teal-tint); color: #0B6F68; font-size: .75rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+
+  /* ── スペック表 ── */
+  .spec-table { width: 100%; border-collapse: collapse; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .spec-table thead th { background: var(--brand-tint); color: var(--brand-deep); font-size: .8rem; font-weight: 700; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+  .spec-table tbody tr { border-bottom: 1px solid var(--line); background: var(--card); }
+  .spec-table tbody tr:last-child { border-bottom: none; }
+  .spec-table tbody td { padding: 12px 16px; font-size: .86rem; }
+  .spec-table tbody td:first-child { font-weight: 700; color: var(--soft); width: 150px; background: var(--paper); }
+  @media (max-width: 640px) { .spec-table tbody td { padding: 10px 10px; font-size: .8rem; } .spec-table tbody td:first-child { width: 86px; } }
+
+  /* ── ナビバー ── */
+  .nav-bar { position: sticky; top: 0; z-index: 100; background: rgba(243,245,251,.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); padding: 0 20px; }
+  .nav-bar .inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; height: 54px; gap: 10px; }
+  .nav-logo { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 7px; text-decoration: none; color: var(--ink); }
+  .nav-logo img { width: 26px; height: 26px; }
+  .nav-links { margin-left: auto; display: flex; gap: 4px; }
+  .nav-links a { font-size: .8rem; font-weight: 700; color: var(--soft); text-decoration: none; padding: 6px 10px; border-radius: 999px; }
+  .nav-links a:hover { background: var(--brand-tint); color: var(--brand); }
+  @media(max-width:640px){ .nav-links a.opt { display: none; } }
+
+  /* ── 授業活用 ── */
+  .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .lesson-card { background: var(--card); border-radius: 14px; border: 1.5px solid var(--line); padding: 18px 16px; }
+  .lesson-card .lc-subj { font-size: .72rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; display: inline-block; }
+  .lesson-card .lc-unit { font-size: .82rem; font-weight: 800; margin-bottom: 4px; color: var(--ink); }
+  .lesson-card .lc-desc { font-size: .78rem; color: var(--soft); line-height: 1.6; }
+  .flow-steps { display: flex; flex-direction: column; }
+  .flow-step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-step .fs-num { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; color: #fff; flex-shrink: 0; }
+  .flow-step .fs-body { flex: 1; }
+  .flow-step .fs-title { font-weight: 800; font-size: .9rem; margin-bottom: 2px; }
+  .flow-step .fs-desc { font-size: .82rem; color: var(--soft); line-height: 1.65; }
+  .flow-step .fs-time { font-size: .72rem; font-weight: 700; color: var(--soft); background: var(--paper); border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+
+  /* ── 規約セクション ── */
+  .notice-section { background: var(--brand-tint); padding: 52px 20px; margin-top: 60px; }
+  .notice-section .inner { max-width: 860px; margin: 0 auto; }
+  .notice-dl { display: flex; flex-direction: column; gap: 14px; font-size: .88rem; line-height: 1.75; }
+  .notice-row { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: baseline; }
+  .notice-dt { font-weight: 800; color: var(--brand-deep); white-space: nowrap; }
+  .notice-dd { color: var(--soft); }
+  .notice-dd a { color: var(--brand); }
+  footer { text-align: center; padding: 32px 16px 52px; font-size: .8rem; color: var(--soft); border-top: 1px solid var(--line); }
+  footer a { color: var(--soft); text-decoration: underline; }
+  footer a:hover { color: var(--brand); }
+  code { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; font-size: .82em; }
+
+  @media(prefers-reduced-motion:reduce){ * { animation:none!important; transition:none!important; } }
+  @media(max-width:600px) {
+    .launch-banner { flex-direction: column; align-items: flex-start; }
+    .notice-row { grid-template-columns: 1fr; }
+    header > div { padding: 16px 16px 0 !important; }
+    .top-visual img { height: 260px; object-fit: cover; }
+    .top-visual .kicker { display: none; }
+    .feature-block-head, .fb-desc, .feature-block-foot { padding-left: 18px; padding-right: 18px; }
+    .fb-img, .fb-points, .stage-list { margin-left: 18px; margin-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ナビバー -->
+<div class="nav-bar">
+  <div class="inner">
+    <a class="nav-logo" href="../index.html"><img src="../assets/favicon.svg" alt="">バーチャル計測制御ラボ</a>
+    <nav class="nav-links">
+      <a class="opt" href="#stages">ステージ</a>
+      <a class="opt" href="#features">機能</a>
+      <a class="opt" href="#lesson">授業活用</a>
+      <a href="../app.html">▶ はじめる</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ── TOP画像 ── -->
+<header>
+  <div style="padding:28px 28px 0;">
+    <div class="top-visual">
+      <img src="../assets/shots/hero-town.jpg" alt="バーチャル計測制御ラボ：3Dのまちを走るロボットカー">
+      <div class="overlay">
+        <span class="kicker">VIRTUAL MEASUREMENT &amp; CONTROL LAB</span>
+        <h1>バーチャル計測制御ラボ</h1>
+        <p>ブロックでプログラム → 3D の仮想空間でロボットカーとセンサーが動く</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── アプリ起動バナー ── -->
+<div style="background:var(--paper);padding:32px 0 0;">
+  <div style="width:90%;max-width:1000px;margin:0 auto;">
+    <div class="launch-box">
+      <div class="launch-banner">
+        <div class="left">
+          <span class="badge-live"><span class="live-dot"></span>ブラウザですぐ使える</span>
+          <h3>バーチャル計測制御ラボで学ぼう</h3>
+          <p>キャラクター「チャッピー」がロボットカーに変身！ センサーで測って、判断して、動かす。23のステージで、計測と制御のプログラミングを段階的に体験できます。植物を育てる部屋もあります。</p>
+        </div>
+        <a href="../app.html" class="btn-launch">▶ 今すぐはじめる</a>
+      </div>
+      <div class="launch-feats">
+        <span class="launch-feat-pill">🧩 ブロックプログラミング</span>
+        <span class="launch-feat-pill">🚗 3Dロボットカー</span>
+        <span class="launch-feat-pill">📏 距離センサー</span>
+        <span class="launch-feat-pill">💡 明るさセンサー</span>
+        <span class="launch-feat-pill">🌡️ 温度・人感センサー</span>
+        <span class="launch-feat-pill">💧 土の水分・時刻センサー</span>
+        <span class="launch-feat-pill">🎬 お手本アニメーション</span>
+        <span class="launch-feat-pill">📊 計測グラフ</span>
+        <span class="launch-feat-pill">🔑 先生用 答え表示</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── 概要 ── -->
+  <p class="section-label">OVERVIEW</p>
+  <p class="section-title">「計測・制御のプログラミング」を、ロボットがなくても体験できる</p>
+  <p class="section-desc">センサーで周りの状況を測り、その値で判断して、モーターやLEDを動かす——中学校 技術・家庭科（技術分野）の「計測・制御のプログラミング」は、実物のロボットやセンサーの準備が大きな負担です。バーチャル計測制御ラボは、その学習をブラウザの中の3D空間で再現します。プログラムの結果がその場で見えるので、生徒は自分で試し、失敗の原因を見つけ、改善するサイクルを何度も回せます。</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:36px;">
+    <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--line);padding:20px 18px;box-shadow:var(--shadow);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">📏</div>
+      <div style="font-weight:800;font-size:.92rem;margin-bottom:4px;">計測</div>
+      <div style="font-size:.8rem;color:var(--soft);line-height:1.6;">距離・明るさ・温度・人感・土の水分・時刻のセンサーで、周りの状況を数値で知る。</div>
+    </div>
+    <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--line);padding:20px 18px;box-shadow:var(--shadow);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">🤔</div>
+      <div style="font-weight:800;font-size:.92rem;margin-bottom:4px;">判断</div>
+      <div style="font-size:.8rem;color:var(--soft);line-height:1.6;">「もし〜なら」「〜になるまで」で、値に応じて動きを切りかえる。</div>
+    </div>
+    <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--line);padding:20px 18px;box-shadow:var(--shadow);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">⚙️</div>
+      <div style="font-weight:800;font-size:.92rem;margin-bottom:4px;">制御</div>
+      <div style="font-size:.8rem;color:var(--soft);line-height:1.6;">モーター・LED・ファン・ポンプ・ブザーを動かして、目的を達成する。</div>
+    </div>
+    <div style="background:var(--card);border-radius:14px;border:1.5px solid var(--line);padding:20px 18px;box-shadow:var(--shadow);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">🔁</div>
+      <div style="font-weight:800;font-size:.92rem;margin-bottom:4px;">試行錯誤</div>
+      <div style="font-size:.8rem;color:var(--soft);line-height:1.6;">走った跡・秒数・グラフでふりかえり、何度でもやり直せる。</div>
+    </div>
+  </div>
+
+  <table class="spec-table" style="margin-bottom:40px;">
+    <thead><tr><th>項目</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>プラットフォーム</td><td>Web アプリ（ブラウザで動作・インストール不要・アカウント登録不要）</td></tr>
+      <tr><td>技術スタック</td><td>HTML5 / CSS3 / Vanilla JavaScript ／ Blockly（ブロック）／ three.js（3D表示）</td></tr>
+      <tr><td>公開</td><td>GitHub Pages（静的ファイル）。ダウンロードして <code>app.html</code> を開けばオフラインでも動作</td></tr>
+      <tr><td>対象</td><td>小学校高学年〜中学生（中学校 技術「計測・制御のプログラミング」「生物育成の技術」）・教員研修</td></tr>
+      <tr><td>動作環境</td><td>Chrome / Edge / Safari / Firefox（パソコン・Chromebook。WebGL が使える環境）</td></tr>
+      <tr><td>保存</td><td>作ったプログラムとクリア記録は、利用者のブラウザ内にのみ保存（サーバーへの送信なし）。利用状況の把握のため Google アナリティクスを使用（匿名）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── ステージ ── -->
+  <p class="section-label" id="stages">STAGES</p>
+  <p class="section-title">6つの章・23ステージで、段階的に深く学べる</p>
+  <p class="section-desc">順次 → 反復 → 分岐 → 計測と制御 → センサーの組み合わせ、と少しずつ難しくなるように並べています。6章では、植物の育成を題材に、時刻や土の水分で動く計測・制御に取り組みます。各ステージには、チャッピーによる説明・ヒント・お手本アニメーションがあります。</p>
+
+  <!-- 1章 -->
+  <div class="feature-block" style="--accent:var(--brand)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--brand-tint);color:var(--brand);font-size:18px;font-weight:900;">01</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 01 &nbsp;·&nbsp; 難易度 ☆〜☆☆</div>
+        <div class="fb-title">じゅんばんに動かそう</div>
+        <span class="fb-tag" style="background:var(--brand-tint);color:var(--brand)">順次処理 &nbsp;·&nbsp; 4ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/town.jpg" alt="まちのコースで、ちゅう車場をめざす" loading="lazy"></div>
+    <div class="fb-desc">「前に進む」「待つ」「左／右に90°曲がる」「止まる」を順番に並べ、ゴールの中で止まる練習から始めます。はやさ50で1秒に1マス（30cm）進むため、マスを数えて秒数を考えられます。実行後は、まっすぐ進んだ区間ごとに「○秒・○マス」が表示されます。</div>
+    <div class="stage-list">
+      <div><b>1-1</b>まっすぐ進もう <span class="st">★</span></div>
+      <div><b>1-2</b>曲がってみよう <span class="st">★</span></div>
+      <div><b>1-3</b>ちゅう車場に止めよう <span class="st">★★</span></div>
+      <div><b>1-4</b>くねくね道 <span class="st">★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- 2章 -->
+  <div class="feature-block" style="--accent:var(--teal)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--teal-tint);color:var(--teal);font-size:18px;font-weight:900;">02</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 02 &nbsp;·&nbsp; 難易度 ☆☆〜☆☆☆</div>
+        <div class="fb-title">くりかえしで動かそう</div>
+        <span class="fb-tag" style="background:var(--teal-tint);color:var(--teal)">反復処理 &nbsp;·&nbsp; 2ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hero-stairs.jpg" alt="階段のようなコース" loading="lazy"></div>
+    <div class="fb-desc">池のまわりの①②③のチェックポイントを順に通る「1周」や、同じ形が続く「階段」で、くりかえしのまとまりを見つけます。長い順次処理を「くりかえし」で短く書ける良さに気づかせます。</div>
+    <div class="stage-list">
+      <div><b>2-1</b>池のまわりを1周 <span class="st">★★</span></div>
+      <div><b>2-2</b>階段をのぼろう <span class="st">★★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- 3章 -->
+  <div class="feature-block" style="--accent:var(--orange)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--orange-tint);color:var(--orange);font-size:18px;font-weight:900;">03</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 03 &nbsp;·&nbsp; 難易度 ☆☆〜☆☆☆</div>
+        <div class="fb-title">へやをかしこくしよう</div>
+        <span class="fb-tag" style="background:var(--orange-tint);color:var(--orange)">分岐処理 &nbsp;·&nbsp; 自動テスト &nbsp;·&nbsp; 4ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hero-room.jpg" alt="夜の部屋で明かりとファンが自動で動く" loading="lazy"></div>
+    <div class="fb-desc">部屋の明るさ・人感・温度センサーを使い、「暗くて人がいたら明かりをつける」「28℃以上でファンを回す」などの自動制御を作ります。実行すると明るさ・人・温度が台本どおりに変わり、出力が正しいかを自動でテスト。まちがえたときは「6秒のとき（暗い・人がいる・22℃）、明かりが消えていたよ」と具体的に返します。</div>
+    <div class="stage-list">
+      <div><b>3-1</b>自動ライト <span class="st">★★</span></div>
+      <div><b>3-2</b>自動ファン <span class="st">★★</span></div>
+      <div><b>3-3</b>人がいるときだけ <span class="st">★★★</span></div>
+      <div><b>3-4</b>スマートルーム <span class="st">★★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- 4章 -->
+  <div class="feature-block" style="--accent:var(--red)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--red-tint);color:var(--red);font-size:18px;font-weight:900;">04</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 04 &nbsp;·&nbsp; 難易度 ☆☆☆〜☆☆☆☆</div>
+        <div class="fb-title">きょりセンサーで止まろう</div>
+        <span class="fb-tag" style="background:var(--red-tint);color:var(--red)">計測と制御 &nbsp;·&nbsp; 4ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hero-cross.jpg" alt="横断歩道のチャッピーの前で止まるロボットカー" loading="lazy"></div>
+    <div class="fb-desc">距離センサーでかべやチャッピーまでの距離を測り、止まる・曲がるを判断します。かべの位置は実行のたびに変わるため、時間だけで止めるプログラムでは成功しません。横断歩道では、車の速さに合わせてチャッピーが飛び出してきます。最後のステージでは「止まって少し待ち、もう一度測る」ことで、かべとチャッピーを見分ける論理を考えます。</div>
+    <div class="stage-list">
+      <div><b>4-1</b>かべの手前で止まろう <span class="st">★★★</span></div>
+      <div><b>4-2</b>ブロックのめいろ <span class="st">★★★</span></div>
+      <div><b>4-3</b>横断歩道のチャッピー <span class="st">★★★★</span></div>
+      <div><b>4-4</b>かべ？それともチャッピー？ <span class="st">★★★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- 5章 -->
+  <div class="feature-block" style="--accent:var(--violet)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--violet-tint);color:var(--violet);font-size:18px;font-weight:900;">05</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 05 &nbsp;·&nbsp; 難易度 ☆☆☆〜☆☆☆☆☆</div>
+        <div class="fb-title">明るさセンサーで走ろう</div>
+        <span class="fb-tag" style="background:var(--violet-tint);color:var(--violet)">ライントレース &nbsp;·&nbsp; センサーの組み合わせ &nbsp;·&nbsp; 4ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hero-line.jpg" alt="くねくねのライントレースコース" loading="lazy"></div>
+    <div class="fb-desc">床の明るさを測るセンサーで黒い線を見つけ、線のふちをたどるライントレースに挑戦します。左右のモーターの速さを変えてカーブさせる仕組みを体験し、最終ステージでは明るさセンサーと距離センサーを組み合わせて、線の上を横切るチャッピーにも対応します。</div>
+    <div class="stage-list">
+      <div><b>5-1</b>黒い線で止まろう <span class="st">★★★</span></div>
+      <div><b>5-2</b>ライントレース（だ円） <span class="st">★★★</span></div>
+      <div><b>5-3</b>ライントレース（くねくね） <span class="st">★★★★</span></div>
+      <div><b>5-4</b>線の上のチャッピー <span class="st">★★★★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- 6章 -->
+  <div class="feature-block" id="ch6" style="--accent:var(--green)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--green-tint);color:var(--green);font-size:18px;font-weight:900;">06</div>
+      <div class="fb-meta">
+        <div class="fb-number">CHAPTER 06 &nbsp;·&nbsp; 難易度 ☆☆〜☆☆☆☆☆</div>
+        <div class="fb-title">植物をそだてよう</div>
+        <span class="fb-tag" style="background:var(--green-tint);color:#047857">生物育成 &nbsp;·&nbsp; 時刻・土の水分センサー &nbsp;·&nbsp; 5ステージ</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hero-plant.jpg" alt="くもりの午後、植物ライトがトマトを照らす部屋" loading="lazy"></div>
+    <div class="fb-desc">植物を観察・栽培するときによく使う計測・制御を、トマトを育てる部屋で体験します。部屋の中は1秒で1時間すすみ、窓の外の空・明るさ・温度が一日の流れにそって変わります。土の水分は時間とともに減り、水やりポンプを動かすと増えます。少なすぎるとトマトがしおれ、多すぎると根がくさるので、ちょうどよく保つ制御が必要です。</div>
+    <div class="fb-points">
+      <div class="fb-point"><span class="pt-icon">🌥️</span><div class="pt-body"><strong>暗くなったら：植物ライト</strong><span>明るさセンサーで、くもりや夕方に植物ライト（LED）をつけます。夜は植物を休ませるため、時刻と組み合わせて「昼間だけ」に絞ります。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">💧</span><div class="pt-body"><strong>水分が減ったら：自動水やり</strong><span>土の水分センサーの値で、ポンプを動かす・止めるを切りかえる、フィードバック制御の基本です。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">🕐</span><div class="pt-body"><strong>時間を決めて：タイマー水やり</strong><span>時刻センサーで「朝7時と夕方17時に1時間だけ」のように、決まった時間に動かします。</span></div></div>
+    </div>
+    <div class="stage-list">
+      <div><b>6-1</b>暗くなったら植物ライト <span class="st">★★</span></div>
+      <div><b>6-2</b>土がかわいたら水やり <span class="st">★★★</span></div>
+      <div><b>6-3</b>朝と夕方に水やり <span class="st">★★★</span></div>
+      <div><b>6-4</b>くもりの日はライトでおぎなう <span class="st">★★★★</span></div>
+      <div><b>6-5</b>全自動ビニールハウス <span class="st">★★★★★</span></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- ── 機能 ── -->
+  <p class="section-label" id="features">機能一覧</p>
+  <p class="section-title">学びを支える 4つのコア機能</p>
+  <p class="section-desc">「やってみる → 見る → 気づく → なおす」を、生徒が自分の力で回せるように設計しています。</p>
+
+  <!-- FEATURE 01 -->
+  <div class="feature-block" style="--accent:var(--orange)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--orange-tint)">🎬</div>
+      <div class="fb-meta">
+        <div class="fb-number">FEATURE 01</div>
+        <div class="fb-title">チャッピーの説明とお手本アニメーション</div>
+        <span class="fb-tag" style="background:var(--orange-tint);color:var(--orange)">導入 · 見通し</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/talk.jpg" alt="チャッピーがミッションを説明する画面" loading="lazy"></div>
+    <div class="fb-desc">各ステージは、チャッピーとのやりとりでミッションを説明し、続いて「お手本」として正解の動きを3Dで再生します。お手本の再生中はプログラムの画面にふたをし、プログラムそのものは見せません。生徒は「どう動けばよいか」だけを手がかりに、自分でプログラムを考えます。</div>
+    <div class="fb-points">
+      <div class="fb-point"><span class="pt-icon">💬</span><div class="pt-body"><strong>やりとり形式の説明</strong><span>「つぎへ」で進むチャッピーの話と、ミッション・ヒントを表示。いつでも「説明」ボタンで見直せます。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">🎥</span><div class="pt-body"><strong>動きだけを見せるお手本</strong><span>ゴールまでの動きを再生。ストップウォッチで「何秒で曲がったか」を観察できます。</span></div></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- FEATURE 02 -->
+  <div class="feature-block" style="--accent:var(--brand)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--brand-tint)">🔍</div>
+      <div class="fb-meta">
+        <div class="fb-number">FEATURE 02</div>
+        <div class="fb-title">失敗をふりかえれる「見える化」</div>
+        <span class="fb-tag" style="background:var(--brand-tint);color:var(--brand)">ふりかえり · 改善</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/review.jpg" alt="走った跡と「3.0秒・3.0マス」の表示" loading="lazy"></div>
+    <div class="fb-desc">失敗してもすぐに画面を切りかえず、仮想空間をそのまま残して結果バーで知らせます。生徒は、どこで、何秒で、なぜうまくいかなかったのかを自分で確かめてから、ヒントを見るか、やり直すかを選べます。</div>
+    <div class="fb-points">
+      <div class="fb-point"><span class="pt-icon">⏱️</span><div class="pt-body"><strong>ストップウォッチと「○秒・○マス」</strong><span>実行中の経過時間と、まっすぐ進んだ区間ごとの秒数・マス数を表示します。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">〰️</span><div class="pt-body"><strong>走った跡とセンサーの値</strong><span>車の軌跡、距離センサーのビームと測った距離、明るさの値を3D上に表示します。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">📊</span><div class="pt-body"><strong>計測グラフ</strong><span>距離・明るさ・温度の30秒分の変化をグラフで確認できます。</span></div></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- FEATURE 03 -->
+  <div class="feature-block" style="--accent:var(--red)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--red-tint)">📡</div>
+      <div class="fb-meta">
+        <div class="fb-number">FEATURE 03</div>
+        <div class="fb-title">本物に近いセンサーと、チャッピーのリアクション</div>
+        <span class="fb-tag" style="background:var(--red-tint);color:var(--red)">シミュレーション · 3D</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/hurt.jpg" alt="チャッピーにぶつかって「いたっ！」" loading="lazy"></div>
+    <div class="fb-desc">距離センサーは超音波センサーのように ±20° の広がりをもち、いちばん近い物までの距離を測ります。ぶつかるとチャッピーがのけぞって頭をおさえ、星が回る「いたい」アクションで失敗を知らせます。部屋のステージでは、明かりや温度に合わせてチャッピーが「くらいよ…」「ありがとう！」と反応します。</div>
+    <div class="fb-points">
+      <div class="fb-point"><span class="pt-icon">🎲</span><div class="pt-body"><strong>毎回変わるコース</strong><span>4-1・5-1 は実行するたびにかべや線の場所が変わり、センサーを使う必要性を実感できます。</span></div></div>
+      <div class="fb-point"><span class="pt-icon">🎥</span><div class="pt-body"><strong>4つの視点</strong><span>「ななめ」「真上」「追いかける」「ロボット」を切りかえ、ドラッグで自由に回せます。</span></div></div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- FEATURE 04 -->
+  <div class="feature-block" style="--accent:var(--violet)">
+    <div class="feature-block-head">
+      <div class="fb-icon" style="background:var(--violet-tint)">🔑</div>
+      <div class="fb-meta">
+        <div class="fb-number">FEATURE 04</div>
+        <div class="fb-title">先生用：シークレットキーで答えの例を表示</div>
+        <span class="fb-tag" style="background:var(--violet-tint);color:var(--violet)">教員向け · 授業準備</span>
+      </div>
+    </div>
+    <div class="fb-img"><img src="../assets/shots/answer.jpg" alt="答えの例をブロックで表示する画面" loading="lazy"></div>
+    <div class="fb-desc">ツールバー右端の 🔑（または Ctrl＋Shift＋K）からシークレットキーを入れると「先生モード」になり、各ステージの答えの例をブロックで確認できます。答えはお手本の動きと同じプログラムから自動で作られ、作業画面に読み込むこともできます。</div>
+    <div style="margin:16px 28px 0;">
+      <div style="padding:12px 16px;background:var(--violet-tint);border-radius:10px;border-left:4px solid var(--violet);font-size:.84rem;color:var(--ink);line-height:1.75;">
+        🔐 <strong>キーの管理：</strong>キーそのものはファイルに書かず、元に戻せないハッシュ値だけを <code>js/config.js</code> に置いています。キーは <code>tools/make-key.html</code> で変更できます。生徒には知らせないでください。
+      </div>
+    </div>
+    <div class="feature-block-foot"></div>
+  </div>
+
+  <!-- ── 授業活用 ── -->
+  <p class="section-label" id="lesson">授業活用</p>
+  <p class="section-title">技術の「計測・制御」「生物育成」を中心に、さまざまな場面で</p>
+  <p class="section-desc">実物の教材を使う前の導入や、台数が足りないときの代わり、家庭学習まで、目的に合わせて使えます。</p>
+
+  <div class="lesson-grid">
+    <div class="lesson-card">
+      <span class="lc-subj" style="background:var(--brand-tint);color:var(--brand)">技術</span>
+      <div class="lc-unit">計測・制御のプログラミング</div>
+      <div class="lc-desc">センサー → 判断 → アクチュエータの流れを、3Dで動きを確かめながら学ぶ。実機教材の前の導入にも。</div>
+    </div>
+    <div class="lesson-card">
+      <span class="lc-subj" style="background:var(--teal-tint);color:var(--teal)">技術</span>
+      <div class="lc-unit">順次・反復・分岐</div>
+      <div class="lc-desc">1〜3章で、プログラムの基本構造を段階的に習得。くりかえしの良さ、条件分岐の必要性に気づく。</div>
+    </div>
+    <div class="lesson-card">
+      <span class="lc-subj" style="background:var(--orange-tint);color:var(--orange)">総合・探究</span>
+      <div class="lc-unit">身の回りの自動化</div>
+      <div class="lc-desc">自動ライト・自動ファン・見守り（人感）など、生活の中の計測・制御と結びつけて考える。</div>
+    </div>
+    <div class="lesson-card">
+      <span class="lc-subj" style="background:var(--green-tint);color:#047857">技術・理科</span>
+      <div class="lc-unit">生物育成と植物の観察</div>
+      <div class="lc-desc">光・水分・温度と植物の育ちを結びつけ、育成環境を自動で調節するしくみ（植物工場・スマート農業）を考える。</div>
+    </div>
+    <div class="lesson-card">
+      <span class="lc-subj" style="background:var(--violet-tint);color:var(--violet)">家庭学習</span>
+      <div class="lc-unit">自分のペースで</div>
+      <div class="lc-desc">チャッピーの説明とお手本があるので、ひとりでも進められる。インストール不要で家庭のパソコンでも使える。</div>
+    </div>
+  </div>
+
+  <!-- 推奨授業フロー -->
+  <div style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1.5px solid var(--line);padding:28px;margin-bottom:32px;">
+    <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;color:var(--soft);margin-bottom:12px;">RECOMMENDED FLOW</div>
+    <div style="font-size:1.05rem;font-weight:900;margin-bottom:20px;">推奨授業フロー（50分授業・4章の例）</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="fs-num" style="background:var(--brand);">1</div>
+        <div class="fs-body"><div class="fs-title">導入：身の回りの「止まる」しくみ</div><div class="fs-desc">自動ドアや自動ブレーキなど、センサーで測って止まる例を紹介し、「時間ではなく距離で判断する」必要性を問いかける。</div></div>
+        <div class="fs-time">5分</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num" style="background:var(--teal);">2</div>
+        <div class="fs-body"><div class="fs-title">個人ワーク：4-1「かべの手前で止まろう」</div><div class="fs-desc">お手本を見てから挑戦。時間で止めるプログラムは、かべの位置が変わると失敗することを体験する。</div></div>
+        <div class="fs-time">15分</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num" style="background:var(--orange);">3</div>
+        <div class="fs-body"><div class="fs-title">ペアワーク：4-3「横断歩道のチャッピー」</div><div class="fs-desc">ぶつかった場面を、走った跡と距離の値でふりかえりながら、しきい値（何cmで止まるか）を話し合って調整する。</div></div>
+        <div class="fs-time">20分</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num" style="background:var(--violet);">4</div>
+        <div class="fs-body"><div class="fs-title">まとめ：計測 → 判断 → 制御</div><div class="fs-desc">自分のプログラムを「計測・判断・制御」に分けて説明し、実際の機器（自動ブレーキなど）との共通点を確認する。</div></div>
+        <div class="fs-time">10分</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仕様ボックス -->
+  <div style="background:var(--brand-tint);border-radius:14px;padding:20px 24px;margin-bottom:32px;border-left:4px solid var(--brand);">
+    <p style="font-size:.9rem;font-weight:700;color:var(--brand);margin-bottom:6px;">📐 仮想ロボットの仕様</p>
+    <p style="font-size:.85rem;color:var(--soft);line-height:1.8;">1マス＝30cm。はやさ50で1秒に1マス進みます。「左／右に90°曲がる」ブロックはその場で回って止まります。距離センサーは前方 ±20°・0〜100cm、明るさセンサーは車の前の下の床の明るさ（0〜100）を測ります。植物の部屋は1秒で1時間すすみ、土の水分センサーは0〜100、時刻センサーは0〜23時の値を返します。</p>
+  </div>
+
+  <!-- センサーの値と目安 -->
+  <p class="section-label" id="sensors">SENSOR VALUES</p>
+  <p class="section-title">センサーの値と目安（「暗い」「近い」はいくつから？）</p>
+  <p class="section-desc">「暗くなったら」「近づいたら」などを、どの数で分けるかをステージごとに決めています。アプリでは、ステージのはじめの説明と3D画面上のミッション欄に「📐 目安」として表示されます。センサー欄のスライダーにもさかいめの値が赤い目盛りで示され、いまの値が「暗い」「近い」などのどれにあたるかも表示されます。目安は答えの一例です。目的を達成できれば、ほかの値でもクリアできます。</p>
+  <table class="spec-table" style="margin-bottom:40px;">
+    <thead><tr><th>センサー</th><th>値の範囲と、だいたいの値</th><th>ステージの目安（さかいめ）</th></tr></thead>
+    <tbody>
+      <tr><td>💡 明るさ<br>（へや・植物）</td><td>0〜100。明るい部屋 80くらい・暗い部屋 10〜15。<br>植物の部屋：晴れの昼 85・朝夕 50・くもりの昼 20くらい・夜 8</td><td><b>30より小さい＝暗い</b>（3-1・3-3・3-4・6-1・6-4・6-5）</td></tr>
+      <tr><td>💡 明るさ<br>（ロボットカー）</td><td>車の前の下の床の明るさ。白い床・芝生 85〜95くらい、黒い線 10くらい</td><td><b>50より小さい＝黒い線の上</b>（5-1〜5-4）</td></tr>
+      <tr><td>📏 きょり</td><td>0〜100cm（1マス＝30cm）。前に何もないときは 100</td><td><b>10cmより小さい＝近い</b>（4-1 かべの手前で止まる）<br><b>15cm</b>（4-2 めいろ）・<b>20cm</b>（4-3・4-4・5-4 チャッピーやかべ）</td></tr>
+      <tr><td>🌡️ 温度</td><td>0〜40℃。ふつう 22〜25℃、あつい日は 30℃をこえる</td><td><b>28℃以上＝あつい</b>（3-2・3-4 ファン）・<b>35℃以上＝あぶない</b>（3-4 ブザー）<br><b>30℃以上＝あつい</b>（6-5 ビニールハウスのファン）</td></tr>
+      <tr><td>💧 土の水分</td><td>0〜100。水やり直後 60〜90、時間がたつと へっていく</td><td><b>30より小さい＝かわいた</b>（6-2・6-5 水やり）<br>15より小さいと しおれて失敗、95をこえると 根がくさって失敗</td></tr>
+      <tr><td>🕐 時刻</td><td>0〜23時。植物の部屋では 1秒で1時間すすむ</td><td><b>昼間＝6時〜17時台</b>（6以上 かつ 18より小さい）（6-4・6-5）<br><b>7 または 17</b>＝朝と夕方の水やりの時間（6-3）</td></tr>
+    </tbody>
+  </table>
+
+</main>
+
+<!-- ── 規約 ── -->
+<section class="notice-section">
+  <div class="inner">
+    <p class="section-label">Notice</p>
+    <p class="section-title" style="margin-bottom:24px;">ご利用にあたって</p>
+    <dl class="notice-dl">
+      <div class="notice-row">
+        <dt class="notice-dt">💾 データについて</dt>
+        <dd class="notice-dd">個人情報は収集しません。作ったプログラムとクリア記録は、利用者のブラウザ内にのみ保存され、サーバーへは送信されません。ブラウザのデータを消すと記録も消えます。サービス改善のため Google アナリティクスで利用状況を匿名で集計しています。</dd>
+      </div>
+      <div class="notice-row">
+        <dt class="notice-dt">🧪 シミュレーションについて</dt>
+        <dd class="notice-dd">ロボットやセンサーの動きは、学習のために単純化したものです。実際の機器とは異なる場合があります。</dd>
+      </div>
+      <div class="notice-row">
+        <dt class="notice-dt">🎓 活用について</dt>
+        <dd class="notice-dd">授業・研修での活用を歓迎します。画面の投影や、画面写真のワークシートへの掲載は、教育目的であれば自由に行えます。詳しくは<a href="../terms.html">利用規約</a>をご覧ください。</dd>
+      </div>
+      <div class="notice-row">
+        <dt class="notice-dt">©️ 著作権</dt>
+        <dd class="notice-dd">&copy; TAKANO tools | バーチャル計測制御ラボ（キャラクター「チャッピー」を含む）。Blockly（Apache License 2.0）、three.js（MIT License）を利用しています。</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<footer>
+  <a href="../index.html">トップページ</a>　·　<a href="../app.html">ラボをはじめる</a>　·　<a href="../terms.html">利用規約</a><br>
+  &copy; Open EduTech Lab
+</footer>
+
+</body>
+</html>

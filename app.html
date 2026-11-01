@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TGT2Y7KLF3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TGT2Y7KLF3');
+  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>バーチャル計測制御ラボ</title>
+<meta name="description" content="ブロックでプログラムを作り、3Dの仮想空間でロボットカーやへやのセンサーを動かして、計測と制御を学べる教材です。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<script src="lib/blockly/blockly_compressed.js"></script>
+<script src="lib/blockly/blocks_compressed.js"></script>
+<script src="lib/blockly/javascript_compressed.js"></script>
+<script src="lib/blockly/msg/ja.js"></script>
+<script src="lib/three/three.min.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/stages.js"></script>
+<script src="js/view3d.js"></script>
+<script src="js/chappy2d.js"></script>
+<script src="js/config.js"></script>
+<script src="js/secret.js"></script>
+</head>
+<body>
+<header>
+  <a class="brand" href="index.html" title="トップページへ">🔧 バーチャル計測制御ラボ</a>
+  <div class="who"><span class="badge teacher" id="teacherBadge" hidden>🔓 先生モード</span><span class="badge" id="progress"></span></div>
+</header>
+
+<div class="toolbar">
+  <button class="btn-run" id="runBtn">▶ 実行</button>
+  <button class="btn-stop" id="stopBtn">■ 止める</button>
+  <button class="btn-quiet" id="resetBtn">↺ はじめから</button>
+  <span class="sep"></span>
+  <button class="btn-stage" id="stageBtn"><span class="sid" id="stageId"></span><span id="stageTitle"></span> ▾</button>
+  <button class="btn-demo" id="demoBtn">🎬 お手本</button>
+  <button class="btn-quiet" id="talkBtn">💬 説明</button>
+  <button class="btn-answer" id="answerBtn" hidden>📖 答え</button>
+  <span class="sep"></span>
+  <button class="btn-quiet" id="saveBtn">💾 保存</button>
+  <button class="btn-quiet" id="loadBtn">📂 読み込み</button>
+  <span class="status" id="status"></span>
+  <button class="btn-key" id="keyBtn" title="先生用：シークレットキー（Ctrl＋Shift＋K）">🔑</button>
+</div>
+
+<div class="wrap">
+  <div id="blocklyArea">
+    <div id="blocklyDiv"></div>
+    <div class="zoombar"><button id="zin">＋</button><button id="zout">－</button></div>
+    <div class="demo-cover" id="demoCover"><div><b>🎬 お手本を再生中</b>お手本のプログラムは ないしょ！<br>右の 仮想空間で、どんな動きか よく見てね</div></div>
+  </div>
+
+  <div class="side">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="card stagecard" id="stageCard">
+      <div id="stage">
+        <div class="hud-top">
+          <div class="mission"><b id="missionTitle"></b><span id="mission"></span><span class="rule" id="rule"></span></div>
+          <div class="views">
+            <button data-view="iso" class="on">ななめ</button>
+            <button data-view="top">真上</button>
+            <button data-view="follow" class="carview">追いかける</button>
+            <button data-view="robot" class="carview">ロボット</button>
+            <button id="bigBtn" title="大きく見る">⛶ 大きく</button>
+          </div>
+        </div>
+        <div class="chip" id="chip"></div>
+        <div class="demo-label" id="demoLabel"><span class="rec"></span>お手本（ゴールまでの動き）<button id="skipBtn">スキップ ▶</button></div>
+        <div class="result-bar" id="resultBar"><span class="result-text" id="resultText"></span><button id="resultMore"></button><button id="resultRetry">↺ もう一度</button><button id="resultNext" class="next" hidden>つぎへ ▶</button></div>
+        <div class="hint">ドラッグで回す ・ ホイールで近づく ・ ダブルクリックで元にもどす</div>
+      </div>
+      <div class="outs">
+        <div class="out" id="oLed">LED<span class="v">消</span></div>
+        <div class="out" id="oFan">ファン<span class="v">止</span></div>
+        <div class="out" id="oPump">ポンプ<span class="v">止</span></div>
+        <div class="out" id="oBuz">ブザー<span class="v">－</span></div>
+        <div class="out" id="oMot">モーター 左/右<span class="v">0 / 0</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span>計測グラフ（30秒）</span>
+        <span class="legend">
+          <span><i style="background:var(--coral)"></i>きょり</span>
+          <span><i style="background:var(--amber)"></i>明るさ</span>
+          <span><i style="background:var(--blue)"></i>温度</span>
+          <span><i style="background:var(--teal)"></i>水分</span>
+        </span></h2>
+      <canvas id="graph"></canvas>
+    </div>
+
+    <div class="card" id="sensorCard">
+      <h2><span>センサー（手で変えられる）</span></h2>
+      <p class="lock-note">🔒 テスト中は、センサーの値が じどうで かわります</p>
+      <div class="sensor" id="sDist"><div class="head"><label>📏 きょり</label><span class="pill" id="vDist"></span></div>
+        <input type="range" id="rDist" min="0" max="100" value="50"><div class="ticks" data-s="distance"></div><div class="mark" data-s="distance"></div><div class="note"></div></div>
+      <div class="sensor" id="sLight"><div class="head"><label>💡 明るさ</label><span class="pill" id="vLight"></span></div>
+        <input type="range" id="rLight" min="0" max="100" value="60"><div class="ticks" data-s="light"></div><div class="mark" data-s="light"></div><div class="note"></div></div>
+      <div class="sensor"><div class="head"><label>🌡️ 温度</label><span class="pill" id="vTemp"></span></div>
+        <input type="range" id="rTemp" min="0" max="40" value="22"><div class="ticks" data-s="temp"></div><div class="mark" data-s="temp"></div></div>
+      <div class="sensor plant-only"><div class="head"><label>💧 土の水分</label><span class="pill" id="vMoist"></span></div>
+        <input type="range" id="rMoist" min="0" max="100" value="50"><div class="ticks" data-s="moisture"></div><div class="mark" data-s="moisture"></div></div>
+      <div class="sensor plant-only"><div class="head"><label>🕐 時刻</label><span class="pill" id="vHour"></span></div>
+        <input type="range" id="rHour" min="0" max="23" value="12"><div class="ticks" data-s="hour"></div><div class="mark" data-s="hour"></div></div>
+      <div class="btn-row">
+        <button class="touch-btn" id="bPir">👤 人がいる</button>
+        <button class="touch-btn" id="bRed">🔴 赤ボタン</button>
+        <button class="touch-btn" id="bBlue">🔵 青ボタン</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
